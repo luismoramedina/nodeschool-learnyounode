@@ -69,6 +69,7 @@ var callback = function (response) {
 var data = http.get(process.argv[2], callback);
 */
 //HTTP COLLECT
+/*
 var http = require('http');
 var bl = require('bl');
 var callback = function (response) {
@@ -79,3 +80,26 @@ var callback = function (response) {
    }))
 }
 var data = http.get(process.argv[2], callback);
+*/
+//JUGGLING ASYNC
+var http = require('http');
+var bl = require('bl');
+
+var datas = [];
+var counter = 0;
+function httpGetWrapper (index) {
+   http.get(process.argv[index + 2], function (response) {
+      response.pipe(bl(function (err, data) {
+         datas[index] = data.toString();
+         counter = counter + 1;
+         if (counter === 3) {
+            for (var i = 0; i < datas.length; i++) {
+               console.log(datas[i]);
+            };
+         };
+      }))
+   })
+}
+httpGetWrapper(0);
+httpGetWrapper(1);
+httpGetWrapper(2);
