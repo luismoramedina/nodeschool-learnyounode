@@ -58,7 +58,7 @@ files(dir, extension, fun);
 */
 
 //HTTP CLIENT
-var http = require('http');
+/*var http = require('http');
 var callback = function (response) {
    //console.log(response);
    response.on('data', function (data) {
@@ -67,8 +67,15 @@ var callback = function (response) {
    response.on('error', console.log);
 }
 var data = http.get(process.argv[2], callback);
-
-
-
-
-
+*/
+//HTTP COLLECT
+var http = require('http');
+var bl = require('bl');
+var callback = function (response) {
+   //console.log(response);
+   response.pipe(bl(function (err, data) {
+      console.log(data.length);
+      console.log(data.toString());
+   }))
+}
+var data = http.get(process.argv[2], callback);
