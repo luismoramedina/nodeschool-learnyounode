@@ -82,6 +82,7 @@ var callback = function (response) {
 var data = http.get(process.argv[2], callback);
 */
 //JUGGLING ASYNC
+/*
 var http = require('http');
 var bl = require('bl');
 
@@ -103,3 +104,45 @@ function httpGetWrapper (index) {
 httpGetWrapper(0);
 httpGetWrapper(1);
 httpGetWrapper(2);
+*/
+//TIME SERVER
+/*var net = require('net')
+
+function getDate() {
+   var date = new Date()
+   return (date.getFullYear() 
+      //TODO padding function
+      + "-" + ((date.getMonth() + 1) > 9 ? (date.getMonth() + 1) : "0" + (date.getMonth() + 1))
+      + "-" + (date.getDate() > 9 ? date.getDate() : "0" + date.getDate())
+      + " " + (date.getHours() > 9 ? date.getHours() : "0" + date.getHours())
+      + ":" + (date.getMinutes() > 9 ? date.getMinutes() : "0" + date.getMinutes())
+      ).toString();
+}
+
+var server = net.createServer(function (socket) {
+//console.log("request!" + console.dir(socket));
+//socket.write("hello");
+   socket.write(getDate());
+   socket.end();
+})
+var port = process.argv[2];
+server.listen(port)
+console.log("listen on " + port)
+*/
+//HTTP FILE SERVER
+var http = require('http')
+var fs = require('fs')
+
+var server = http.createServer(function (request, response) {
+   console.log("request!");
+
+   stream = fs.createReadStream(process.argv[3]);
+//   stream.on('open', function () {
+//      console.log("open");
+//      stream.pipe(response);
+//   });
+   stream.pipe(response);
+})
+var port = process.argv[2];
+server.listen(port);
+console.log("listen on " + port);
