@@ -130,8 +130,9 @@ server.listen(port)
 console.log("listen on " + port)
 */
 //HTTP FILE SERVER
-var http = require('http')
-var fs = require('fs')
+/*
+var http = require('http');
+var fs = require('fs');
 
 var server = http.createServer(function (request, response) {
    console.log("request!");
@@ -143,6 +144,70 @@ var server = http.createServer(function (request, response) {
 //   });
    stream.pipe(response);
 })
+var port = process.argv[2];
+server.listen(port);
+console.log("listen on " + port);
+*/
+
+//curl localhost:3333 -d lower_hello
+/*
+var http = require('http');
+var through2map = require('through2-map');
+
+var server = http.createServer(function (request, response) {
+    console.log("request!");
+
+    request.pipe(through2map(function (chunk) {
+        return chunk.toString().toUpperCase()
+    })).pipe(response)
+
+});
+var port = process.argv[2];
+server.listen(port);
+console.log("listen on " + port);
+*/
+
+var http = require('http');
+var url = require('url');
+
+function parseIsoDate (isoDate) {
+   var date = new Date(isoDate);
+   var data = JSON.stringify(
+      {
+         "hour": date.getHours(),
+         "minute": date.getMinutes(),
+         "second": date.getSeconds()
+      }
+   );
+   console.log(data);
+   return data; 
+}
+
+var server = http.createServer(function (request, response) {
+   console.log("req!");
+   parsed = url.parse(request.url, true);
+   console.log(parsed);
+   //var iso = parsed.query['iso'];
+   var iso = parsed.query.iso;
+   if ('/api/parsetime' === parsed.pathname
+      && iso) {
+      console.log('parsetime');
+      var data = parseIsoDate(iso)
+      response.end(data);
+      response.writeHead(200, { 'Content-Type': 'application/json' })
+   };
+   if ('/api/unixtime' === parsed.pathname 
+      && iso) {
+      response.end(JSON.stringify(
+         { "unixtime": + 
+            new Date(iso).getTime()
+         }));
+      response.writeHead(200, { 'Content-Type': 'application/json' })
+   };
+   response.writeHead(404);
+   response.end();
+});
+
 var port = process.argv[2];
 server.listen(port);
 console.log("listen on " + port);
